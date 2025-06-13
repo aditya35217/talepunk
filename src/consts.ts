@@ -5,7 +5,7 @@ export const siteTitle: string =
 export const siteDescription: string =
   "We rant about anime, movies and TV shows, discuss books, manga; and happenings in tech and their wider implications; from story and tech to policy and geopolitics";
 
-export type categoryName = "tech" | "otaku" | "cinema" | "world" | "books";
+export type categoryName = "tech" | "otaku" | "cinema" | "world" | "books" | "movie";
 export const categoryInfo: {
   [key: string]: { title: string; description: string };
 } = {
@@ -16,6 +16,11 @@ export const categoryInfo: {
   },
   cinema: {
     title: "Cinema",
+    description:
+      "We talk 'nice' about the things we like and try not to hate the things that wasted our time. Get good recommendations, reviews for movies and TV shows.",
+  },
+  movie: {
+    title: "Movie",
     description:
       "We talk 'nice' about the things we like and try not to hate the things that wasted our time. Get good recommendations, reviews for movies and TV shows.",
   },
