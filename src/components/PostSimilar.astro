@@ -1,0 +1,45 @@
+---
+import { getPosts } from "./getPosts";
+import Card from "./Card.astro";
+
+interface Props {
+  tags: string[];
+  id: string;
+}
+
+const { tags, id } = Astro.props;
+
+const allPosts = await getPosts("all");
+
+const rankPosts = (tags: string[], id: string) => {
+  return allPosts
+    .filter((post) => post.id !== id)
+    .map((post) => {
+      const commonTagsCount = post.data.tags.reduce(
+        (count: number, tag: string) =>
+          tags.includes(tag) ? count + 1 : count,
+        0,
+      );
+      return { ...post, commonTagsCount };
+    })
+    .filter((post) => post.commonTagsCount > 0)
+    .sort(
+      (a, b) =>
+        b.commonTagsCount - a.commonTagsCount ||
+        b.data.date.getTime() - a.data.date.getTime(),
+    )
+    .slice(0, 4);
+};
+
+const similarPosts = rankPosts(tags, id);
+---
+
+{
+  similarPosts.length > 0 && (
+    <div class="mt-12 mb-8">
+      <h2 class="text-3xl font-bold my-2">Similar</h2>
+
+      <Card Posts={similarPosts} small={true} />
+    </div>
+  )
+}

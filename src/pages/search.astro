@@ -1,0 +1,288 @@
+---
+import { siteName } from "../consts";
+import Layout from "../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout
+  title={`Search | ${siteName}`}
+  description={`Search on ${siteName}, find what you need.`}
+>
+  <div class="max-w-2xl 2xl:max-w-4xl 2xl:text-2xl mx-auto">
+    <form id="searchFormPage" class="flex items-center px-2 xs:mx-2 md:mx-0">
+      <input
+        type="text"
+        id="searchBarPage"
+        placeholder="Search here"
+        class="pr-2 bg-comp pl-3 py-1.5 w-full focus:outline-none"
+      />
+      <button
+        class="bg-content text-comp py-2 px-5 2xl:py-3 2xl:px-7"
+        aria-label="search"
+      >
+        <Icon name="search" size={20} />
+      </button>
+    </form>
+
+    <div id="searchResultsPage"></div>
+  </div>
+
+  <div id="paginationContainer"></div>
+
+  <script is:inline>
+    document.addEventListener("astro:page-load", async () => {
+      /* event Listener and await search() was causing problem with search component so use 'if' */
+      if (document.title.includes("Search | ")) {
+        const pagefind = await import("/pagefind/pagefind.js");
+        pagefind.init();
+
+        const searchFormPage = document.getElementById("searchFormPage");
+        const searchBarPage = document.getElementById("searchBarPage");
+        const searchResultsPage = document.getElementById("searchResultsPage");
+        const paginationContainer = document.getElementById(
+          "paginationContainer",
+        );
+
+        const sanitizeInput = (input) => {
+          return input
+            .replace(/[<>]/g, "")
+            .replace(/["']/g, "")
+            .replace(/&/g, "")
+            .replace(/\\/g, "")
+            .replace(/\//g, "")
+            .replace(/\(/g, "")
+            .replace(/\)/g, "")
+            .replace(/=/g, "")
+            .replace(/;/g, "")
+            .replace(/\s+/g, " ")
+            .trim();
+        };
+
+        let oldSearchTerm = "";
+        let oldResults = {};
+
+        const clearElement = (element) => {
+          element.innerHTML = "";
+        };
+
+        const showResults = async (page = 1) => {
+          const currentPage = Number(page);
+
+          const resultsSummary = document.createElement("p");
+          resultsSummary.className = "px-2 my-3";
+          if (currentPage > 1) {
+            const pageSpan = document.createElement("span");
+            pageSpan.className = "mr-2";
+            pageSpan.textContent = `(Page ${currentPage})`;
+            resultsSummary.appendChild(pageSpan);
+          }
+          const spanResults = document.createElement("span");
+          spanResults.className = "font-bold mx-1";
+          spanResults.textContent = oldResults.length;
+          const textBefore = document.createTextNode(" Search results for ");
+          const spanSearchTerm = document.createElement("span");
+          spanSearchTerm.className = "italic mx-1";
+          spanSearchTerm.textContent = oldSearchTerm;
+          resultsSummary.appendChild(spanResults);
+          resultsSummary.appendChild(textBefore);
+          resultsSummary.appendChild(spanSearchTerm);
+          searchResultsPage.appendChild(resultsSummary);
+
+          const resultsPerPage = 8;
+          const lastPage = Math.ceil(oldResults.length / resultsPerPage);
+          const startResult = (currentPage - 1) * resultsPerPage;
+          const endResult = startResult + resultsPerPage;
+          const pageResults = oldResults.slice(startResult, endResult);
+
+          for (const result of pageResults) {
+            const data = await result.data();
+
+            const resultContainer = document.createElement("a");
+            resultContainer.href = data.url;
+            resultContainer.className =
+              "grid grid-cols-3 gap-x-4 p-2 px-2 hover:bg-hv";
+
+            const imgContainer = document.createElement("div");
+            imgContainer.className =
+              "col-span-1 self-center relative w-full h-auto";
+
+            const img = document.createElement("img");
+            img.className = "w-full h-auto";
+            img.src = data.meta.image;
+            img.alt = data.meta.title;
+            img.srcset = data.meta.srcset;
+            img.sizes = "(max-width: 1024px) 33vw, 25vw";
+            imgContainer.appendChild(img);
+            
+
+            const tag = document.createElement("span");
+            tag.className =
+              "text-xs xs:text-sm 2xl:text-lg absolute bottom-0 left-0 bg-comp border-t border-r border-br px-0.5 xs:px-1";
+            tag.textContent = data.meta.tag;
+            imgContainer.appendChild(tag);
+
+            const textContainer = document.createElement("div");
+            textContainer.className = "col-span-2 w-full h-full";
+
+            const title = document.createElement("h2");
+            title.className =
+              "text-left text-base sm:text-lg 2xl:text-2xl font-medium xs:font-semibold";
+            title.textContent = data.meta.title;
+            textContainer.appendChild(title);
+
+            const description = document.createElement("p");
+            description.className =
+              "text-left text-sm 2xl:text-lg hidden xs:block";
+            description.textContent = data.meta.description;
+            textContainer.appendChild(description);
+
+            const date = document.createElement("p");
+            date.className =
+              "text-content2 mt-2 md:mt-4 text-left text-sm 2xl:text-lg hidden xs:block";
+            date.textContent = data.meta.date;
+            textContainer.appendChild(date);
+
+            resultContainer.appendChild(imgContainer);
+            resultContainer.appendChild(textContainer);
+
+            const hr = document.createElement("hr");
+            hr.className = "border-t border-br block sticky top-0 z-10";
+
+            searchResultsPage.appendChild(hr);
+            searchResultsPage.appendChild(resultContainer);
+          }
+
+          if (lastPage > 1) {
+            const paginationContainerDiv = document.createElement("div");
+            paginationContainerDiv.className =
+              "flex justify-center my-12 space-x-4";
+
+            if (currentPage > 1) {
+              const prevButton = document.createElement("button");
+              prevButton.dataset.page = currentPage - 1;
+              prevButton.className =
+                "prev-button border border-br px-1 py-1 hover:bg-comp";
+              prevButton.ariaLabel = "previous";
+              prevButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20"><path fill="currentColor" d="m4 10l9 9l1.4-1.5L7 10l7.4-7.5L13 1z"/></svg>`;
+              paginationContainerDiv.appendChild(prevButton);
+            }
+
+            if (lastPage > 1) {
+              const firstPageButton = document.createElement("button");
+              firstPageButton.dataset.page = 1;
+              firstPageButton.className = `border border-br px-2 hover:bg-comp ${currentPage === 1 && "bg-content text-bkg hover:bg-content"}`;
+              firstPageButton.textContent = "1";
+              paginationContainerDiv.appendChild(firstPageButton);
+            }
+
+            const visiblePagesStart = Math.max(2, currentPage - 2);
+            const visiblePagesEnd = Math.min(lastPage - 1, currentPage + 2);
+
+            if (visiblePagesStart > 2) {
+              const ellipsis = document.createElement("span");
+              ellipsis.textContent = "...";
+              paginationContainerDiv.appendChild(ellipsis);
+            }
+
+            for (let i = visiblePagesStart; i <= visiblePagesEnd; i++) {
+              const pageButton = document.createElement("button");
+              pageButton.dataset.page = i;
+              pageButton.className = `border border-br px-2 hover:bg-comp ${i === currentPage && "bg-content text-bkg hover:bg-content"}`;
+              pageButton.textContent = i;
+              paginationContainerDiv.appendChild(pageButton);
+            }
+
+            if (visiblePagesEnd < lastPage - 1) {
+              const ellipsis = document.createElement("span");
+              ellipsis.textContent = "...";
+              paginationContainerDiv.appendChild(ellipsis);
+            }
+
+            if (lastPage > 1) {
+              const lastPageButton = document.createElement("button");
+              lastPageButton.dataset.page = lastPage;
+              lastPageButton.className = `border border-br px-2 hover:bg-comp ${currentPage === lastPage && "bg-content text-bkg hover:bg-content"}`;
+              lastPageButton.textContent = lastPage;
+              paginationContainerDiv.appendChild(lastPageButton);
+            }
+
+            if (currentPage < lastPage) {
+              const nextButton = document.createElement("button");
+              nextButton.dataset.page = currentPage + 1;
+              nextButton.className =
+                "next-button border border-br px-1 py-1 hover:bg-comp";
+              nextButton.ariaLabel = "next";
+              nextButton.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 20 20"><path fill="currentColor" d="M7 1L5.6 2.5L13 10l-7.4 7.5L7 19l9-9z"/></svg>`;
+              paginationContainerDiv.appendChild(nextButton);
+            }
+
+            paginationContainer.appendChild(paginationContainerDiv);
+          }
+        };
+
+        const search = async () => {
+          const urlParams = new URLSearchParams(window.location.search);
+          const query = urlParams.get("q");
+
+          const searchInput = sanitizeInput(query);
+          searchBarPage.value = searchInput;
+
+          if (searchInput !== oldSearchTerm || !oldSearchTerm) {
+            clearElement(searchResultsPage);
+            clearElement(paginationContainer);
+            if (searchInput === "") {
+              const noResults = document.createElement("p");
+              noResults.className = "italic px-2 mt-8 mx-2";
+              noResults.textContent = "Type and hit Enter";
+              searchResultsPage.appendChild(noResults);
+            } else if (searchInput.length < 3) {
+              const shortQuery = document.createElement("p");
+              shortQuery.className = "italic px-2 mt-8 mx-2";
+              shortQuery.textContent = "Enter at least 3 characters";
+              searchResultsPage.appendChild(shortQuery);
+            } else {
+              oldSearchTerm = searchInput;
+              const search = await pagefind.search(searchInput);
+              oldResults = await search.results;
+
+              if (oldResults.length === 0) {
+                const noResults = document.createElement("p");
+                noResults.className = "italic px-2 mt-8 mx-2";
+                noResults.textContent = "No results found.";
+                searchResultsPage.appendChild(noResults);
+              } else {
+                await showResults();
+              }
+            }
+          }
+        };
+
+        await search();
+
+        searchFormPage.addEventListener("submit", async (event) => {
+          event.preventDefault();
+          const query = encodeURIComponent(searchBarPage.value.trim());
+          const newUrl = `/search/?q=${query}`;
+          window.history.pushState({ path: newUrl }, "", newUrl);
+          await search();
+        });
+
+        paginationContainer.addEventListener("click", async (event) => {
+          const { target } = event;
+          const button = target.closest("button");
+
+          if (!button) return;
+
+          const page = button.getAttribute("data-page");
+
+          if (page) {
+            window.scrollTo(0, 50);
+            clearElement(searchResultsPage);
+            clearElement(paginationContainer);
+            await showResults(page);
+          }
+        });
+      }
+    });
+  </script>
+</Layout>

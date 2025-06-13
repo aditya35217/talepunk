@@ -1,0 +1,42 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { Image } from "astro:assets";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+---
+
+<div>
+  <a
+    href={`/${post.data.category}/${post.id}/`}
+    class="border-b border-r sm:border-t border-comp grid grid-cols-1 sm:grid-cols-[minmax(0,55%)_minmax(0,1fr)] sm:gap-4 sm:items-center justify-center"
+  >
+    <div class="relative w-full h-full">
+      <Image
+        transition:name={post.id}
+        class="h-full w-full object-cover"
+        src={post.data.image}
+        alt={post.data.title}
+        widths={[320, 640, 768, 1024, 1280, post.data.image.width]} 
+        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 55vw, 42vw"
+        loading="eager"
+      />
+      <span
+        class="absolute bottom-0 left-0 bg-comp border border-br m-1 px-1 md:px-2 rounded-sm sm:rounded sm:text-lg"
+      >
+        {post.data.tags[0]}
+      </span>
+    </div>
+    <div class="sm:m-2">
+      <h1
+        class="text-xl sm:text-2xl lg:text-3xl 2xl:text-4xl font-semibold sm:font-bold my-2 sm:my-0"
+      >
+        {post.data.title}
+      </h1>
+      <p class="sm:text-xl sm:mt-4 2xl:text-2xl">{post.data.description}</p>
+    </div>
+  </a>
+</div>

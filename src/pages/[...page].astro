@@ -1,0 +1,27 @@
+---
+import type { GetStaticPaths } from "astro";
+import { siteTitle, siteDescription } from "../consts";
+import { getPosts } from "../components/getPosts";
+import PageWeb from "../components/PageWeb.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getPosts("all");
+
+  allPosts.sort((a, b) => {
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
+
+  return paginate(allPosts, {
+    pageSize: 12,
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+---
+
+<PageWeb
+  title={siteTitle}
+  description={siteDescription}
+  page={page}
+  pageFirst={true}
+/>

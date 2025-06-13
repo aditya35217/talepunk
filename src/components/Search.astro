@@ -1,0 +1,206 @@
+---
+import { Icon } from "astro-icon/components";
+---
+
+<div>
+  <form id="searchForm" name="Search" class="flex items-center relative mr-3">
+    <input
+      type="text"
+      id="searchBar"
+      placeholder="Search..."
+      class="pr-6 xs:pr-8 py-0.5 pl-8 focus:outline focus:outline-[1px] focus:outline-accent w-32 xs:w-44 focus:w-96 focus:max-w-[192px] xs:focus:max-w-xs sm:focus:max-w-sm bg-bkg"
+    />
+    <div class="absolute left-0 ml-1"><Icon name="search2" size={20} /></div>
+    <button
+      type="reset"
+      id="resetBtn"
+      aria-label="close"
+      class="hidden absolute right-0 py-0.5 px-0.5 bg-bkg"
+    >
+      <Icon name="cross" size={20} />
+    </button>
+  </form>
+
+  <div
+    id="searchResults"
+    class="hidden absolute bg-comp max-h-[calc(100vh-2rem)] overflow-y-auto mt-1 max-w-lg sm:mr-8 min-w-[192px] xs:min-w-[320px] sm:min-w-[384px] lg:min-w-96"
+  >
+  </div>
+</div>
+
+<script is:inline>
+  document.addEventListener("astro:page-load", async () => {
+    const pagefind = await import("/pagefind/pagefind.js");
+    pagefind.init();
+
+    const searchForm = document.getElementById("searchForm");
+    const searchBar = document.getElementById("searchBar");
+    const resetBtn = document.getElementById("resetBtn");
+    const searchResults = document.getElementById("searchResults");
+
+    const sanitizeInput = (input) => {
+      return input
+        .replace(/[<>]/g, "")
+        .replace(/["']/g, "")
+        .replace(/&/g, "")
+        .replace(/\\/g, "")
+        .replace(/\\/g, "")
+        .replace(/\(/g, "")
+        .replace(/\)/g, "")
+        .replace(/=/g, "")
+        .replace(/;/g, "")
+        .replace(/\s+/g, " ")
+        .trim();
+    };
+
+    let oldSearchTerm = "";
+
+    const handleSearchInput = async () => {
+      const searchInput = sanitizeInput(searchBar.value);
+
+      if (searchInput !== oldSearchTerm) {
+        oldSearchTerm = searchInput;
+        searchBar.value = searchInput;
+        searchResults.innerHTML = "";
+
+        if (searchInput === "") {
+          return;
+        } else if (searchInput.length < 3) {
+          const p = document.createElement("p");
+          p.className = "px-2";
+          p.textContent = "...";
+          searchResults.appendChild(p);
+        } else {
+          const search = await pagefind.debouncedSearch(
+            searchInput,
+            {
+              /* options */
+            },
+            700,
+          );
+
+          if (!search) return;
+
+          const results = await search.results;
+
+          if (results.length === 0) {
+            const p = document.createElement("p");
+            p.className = "px-2 italic";
+            p.textContent = "No results found.";
+            searchResults.appendChild(p);
+          } else if (results.length > 4) {
+            const a = document.createElement("a");
+            a.href = `/search/?q=${searchInput}`;
+            a.className =
+              "px-2 flex justify-between items-center hover:text-accent";
+
+            const p = document.createElement("p");
+            const textBefore = document.createTextNode("See all ");
+            const spanResults = document.createElement("span");
+            spanResults.className = "font-semibold mx-1";
+            spanResults.textContent = results.length;
+            const textMiddle = document.createTextNode(" results for ");
+            const spanSearch = document.createElement("span");
+            spanSearch.className = "italic mx-1";
+            spanSearch.textContent = searchInput;
+
+            p.appendChild(textBefore);
+            p.appendChild(spanResults);
+            p.appendChild(textMiddle);
+            p.appendChild(spanSearch);
+
+            a.appendChild(p);
+
+            a.innerHTML += `<svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 15 15" class="inline-block"><path fill="currentColor" d="M8.293 2.293a1 1 0 0 1 1.414 0l4.5 4.5a1 1 0 0 1 0 1.414l-4.5 4.5a1 1 0 0 1-1.414-1.414L11 8.5H1.5a1 1 0 0 1 0-2H11L8.293 3.707a1 1 0 0 1 0-1.414" /></svg>`;
+
+            searchResults.appendChild(a);
+          } else {
+            const p = document.createElement("p");
+            p.className = "px-2";
+            const textBefore = document.createTextNode("Search results for ");
+            const span = document.createElement("span");
+            span.className = "italic mx-1";
+            span.textContent = searchInput;
+            const textAfter = document.createTextNode("");
+            p.appendChild(textBefore);
+            p.appendChild(span);
+            p.appendChild(textAfter);
+            searchResults.appendChild(p);
+          }
+
+          const limitedResults = results.slice(0, 4);
+
+          for (const result of limitedResults) {
+            const data = await result.data();
+            const hr = document.createElement("hr");
+            hr.className = "border-t border-br";
+            searchResults.appendChild(hr);
+
+            const a = document.createElement("a");
+            a.href = `${data.url}`;
+            a.className =
+              "grid grid-cols-1 sm:grid-cols-4 gap-x-2 p-2 hover:bg-hv";
+
+            const textContainer = document.createElement("div");
+            textContainer.className = "col-span-4 sm:col-span-3 w-full h-full";
+            const h2 = document.createElement("h2");
+            h2.className = "text-left text-lg md:font-semibold";
+            h2.textContent = data.meta.title;
+            const pDesc = document.createElement("p");
+            pDesc.className = "hidden md:block text-left text-sm";
+            pDesc.textContent = data.meta.description;
+
+            textContainer.appendChild(h2);
+            textContainer.appendChild(pDesc);
+            a.appendChild(textContainer);
+
+            const imgContainer = document.createElement("div");
+            imgContainer.className =
+              "col-span-1 relative hidden sm:block self-center w-full h-auto";
+
+            const img = document.createElement("img");
+            img.className = "w-full h-auto";
+            img.src = data.meta.image;
+            img.alt = data.meta.title;
+            img.srcset = data.meta.srcset;
+            img.sizes = "10vw";
+            imgContainer.appendChild(img);
+
+            const tag = document.createElement("span");
+            tag.className = "text-xs absolute bottom-0 right-0 bg-bkg px-0.5";
+            tag.textContent = data.meta.tag;
+            imgContainer.appendChild(tag);
+
+            a.appendChild(imgContainer);
+            searchResults.appendChild(a);
+          }
+        }
+      }
+    };
+
+    searchBar.addEventListener("input", handleSearchInput);
+
+    searchBar.addEventListener("focus", () => {
+      searchResults.classList.remove("hidden");
+      resetBtn.classList.remove("hidden");
+    });
+
+    searchResults.addEventListener("mousedown", (event) => {
+      event.preventDefault();
+    });
+
+    resetBtn.addEventListener("mousedown", () => {
+      searchBar.value = "";
+      searchResults.innerHTML = "";
+    });
+
+    searchBar.addEventListener("blur", () => {
+      searchResults.classList.add("hidden");
+      resetBtn.classList.add("hidden");
+    });
+
+    searchForm.addEventListener("submit", () => {
+      window.location.href = `/search/?q=${oldSearchTerm}`;
+    });
+  });
+</script>

@@ -1,0 +1,107 @@
+---
+import type { Page } from "astro";
+import { Icon } from "astro-icon/components";
+
+interface Props {
+  page: Page;
+}
+
+const { page } = Astro.props;
+
+const replacePageNum = (url: string, newPageNum: number): string => {
+  const urlParts = url.replace(/\/+$/, '').split('/');
+  const lastPart = urlParts[urlParts.length - 1];
+  if (/^\d+$/.test(lastPart)) {
+    urlParts.pop();
+  }
+  return urlParts.join('/') + '/' + String(newPageNum) + '/';
+};
+
+---
+
+{
+  page.lastPage !== 1 && (
+    <div class="flex justify-center items-center mt-24 space-x-4">
+      
+      {page.url.prev && (
+        <a
+          href={page.url.prev}
+          class="border border-br p-0.5 hover:bg-comp"
+          aria-label="previous"
+        >
+          <Icon name="previous" size={20} />
+        </a>
+      )}
+
+      {page.url.first && (
+        <a
+          href={page.url.first}
+          class="border border-br px-2 hover:bg-comp"
+        >
+          1
+        </a>
+      )}
+
+      {page.currentPage > 4 && <span>...</span>}
+
+      {page.currentPage > 3 && (
+        <a
+          href={replacePageNum(page.url.current, page.currentPage - 2)}
+          class="border border-br px-2 hover:bg-comp"
+        >
+          {page.currentPage - 2}
+        </a>
+      )}
+
+      {page.currentPage > 2 && (
+        <a
+          href={page.url.prev}
+          class="border border-br px-2 hover:bg-comp"
+        >
+          {page.currentPage - 1}
+        </a>
+      )}
+
+      <p class="bg-content text-bkg border border-br px-2">
+        {page.currentPage}
+      </p>
+
+      {page.currentPage < page.lastPage - 1 && (
+        <a
+          href={page.url.next}
+          class="border border-br px-2 hover:bg-comp"
+        >
+          {page.currentPage + 1}
+        </a>
+      )}
+
+      {page.currentPage < page.lastPage - 2 && (
+        <a
+          href={replacePageNum(page.url.current, page.currentPage + 2)}
+          class="border border-br px-2 hover:bg-comp"
+        >
+          {page.currentPage + 2}
+          
+        </a>
+      )}
+
+      {page.currentPage < page.lastPage - 3 && <span>...</span>}
+
+      {page.url.last && (
+        <a href={page.url.last} class="border border-br px-2 hover:bg-comp">
+          {page.lastPage}
+        </a>
+      )}
+
+      {page.url.next && (
+        <a
+          href={page.url.next}
+          class="border border-br p-0.5 hover:bg-comp"
+          aria-label="next"
+        >
+          <Icon name="next" size={20} />
+        </a>
+      )}
+    </div>
+  )
+}

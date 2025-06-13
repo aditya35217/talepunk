@@ -1,0 +1,47 @@
+---
+import { website, siteName, categoryInfo } from "../../consts";
+import Layout from "../../layouts/Layout.astro";
+import { Icon } from "astro-icon/components";
+---
+
+<Layout
+  title={`RSS feeds | ${siteName}`}
+  description="Get RSS feeds for different Category"
+  image={new URL("TalePunk.webp", Astro.site)}
+>
+
+  <div
+    class="grid grid-cols-1 items-center justify-center text-lg xs:text-xl 2xl:text-2xl max-w-lg 2xl:max-w-2xl mx-8 md:mx-auto"
+  >
+    <div
+      class="flex space-x-2 items-center font-bold text-xl xs:text-2xl 2xl:text-3xl mb-12"
+    >
+      <span><Icon name="rss" size={32} /></span>
+      <span><h1>RSS feeds of {siteName}</h1></span>
+    </div>
+
+    <a
+      href={`/feed/${website}.xml`}
+      class="block py-2 ml-4 hover:text-accent hover:font-semibold"
+      >{`${siteName} (all posts)`}</a
+    >
+    <hr class="border-b border-br" />
+    <a
+      href={`/feed/news.xml`}
+      class="block py-2 ml-4 hover:text-accent hover:font-semibold"
+      >{`News`}</a
+    >
+    <hr class="border-b border-br" />
+    {
+      Object.keys(categoryInfo).map((category) => (
+        <a
+          href={`/feed/${category}.xml`}
+          class="block py-2 ml-4 hover:text-accent hover:font-semibold"
+        >
+          {categoryInfo[category].title}
+        </a>
+        <hr class="border-b border-br" />
+      ))
+    }
+  </div>
+</Layout>

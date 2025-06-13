@@ -1,0 +1,102 @@
+---
+import { siteName, categoryInfo } from "../consts";
+import { Icon } from "astro-icon/components";
+import HeaderLink from "./HeaderLink.astro";
+import ThemeIcon from "./ThemeIcon.astro";
+import DotMenu from "./DotMenu.astro";
+import Search from "./Search.astro";
+
+const pathname = Astro.url.pathname;
+---
+
+<header>
+  <nav transition:animate="none" class="fixed left-0 right-0 z-40 bg-comp">
+    <div id="navbar" class="flex justify-between items-center ml-1 mr-2 xs:mx-4">
+      <div class="self-start mr-4 sm:ml-4 lg:mx-8 self-center">
+        <a href="/" class="flex items-center font-semibold text-logo text-2xl">
+          <div class="mr-1">
+            <Icon name="logo" size={24} />
+          </div>
+          {siteName}
+        </a>
+      </div>
+      <div class="self-end flex items-center self-center">
+        {
+          !pathname.includes("/search") ? (
+            <div class="flex-2">
+              {" "}
+              <Search />
+            </div>
+          ) : (
+            ""
+          )
+        }
+
+        <div>
+          <button
+            type="button"
+            id="menu-toggle"
+            aria-label="menu"
+            class="md:hidden rounded-full hover:bg-hv p-2"
+          >
+            <Icon name="sandwich" size={20} />
+          </button>
+
+          <div
+            id="menu"
+            class="hidden md:flex md:static absolute left-0 right-0 z-40 text-center bg-comp"
+          >
+            <hr class="border-t border-br mb-2" />
+
+            {
+              Object.keys(categoryInfo).map((category, index) => (
+                <HeaderLink
+                  href={`/${category}/`}
+                  class={`block py-1 sm:py-2 md:py-1 px-2 sm:hover:bg-hv sm:hover:rounded-md md:hover:rounded-none sm:mx-2 md:mx-0 ${
+                    index % 2 === 1 ? "bg-hv sm:bg-comp" : ""
+                  }`}
+                >
+                  {categoryInfo[category].title}
+                </HeaderLink>
+              ))
+            }
+
+            <ThemeIcon />
+            <DotMenu />
+            
+          </div>
+        </div>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="m-8 md:m-10"></div>
+
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const menuToggle = document.getElementById(
+      "menu-toggle",
+    ) as HTMLButtonElement;
+    const menu = document.getElementById("menu") as HTMLElement;
+
+    menuToggle.addEventListener("click", (event: MouseEvent) => {
+      event.stopPropagation();
+      menuToggle.classList.add("p-2");
+      menu.classList.toggle("hidden");
+    });
+
+    if (menu.classList.contains("hidden")) {
+      document.addEventListener("click", (event: MouseEvent) => {
+        const target = event.target as Node;
+
+        if (!menu.contains(target)) {
+          menu.classList.add("hidden");
+        }
+      });
+
+      document.addEventListener("scroll", () => {
+        menu.classList.add("hidden");
+      });
+    }
+  });
+</script>

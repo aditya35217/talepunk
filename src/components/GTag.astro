@@ -1,0 +1,72 @@
+---
+ 
+---
+<!-- Google Tag Manager -->
+<script is:inline type="text/partytown">
+  window.dataLayer = window.dataLayer || [];
+  function gtag() {
+    dataLayer.push(arguments);
+  }
+
+  const getCookieValue = (name) => {
+    const match = document.cookie.match(
+      new RegExp(`(?:^|; )${name}=([^;]*)`),
+    );
+    return match ? match[1] : null;
+  };
+
+  if (getCookieValue("cookieConsent") === "granted" || getCookieValue("needConsent") === "no") {
+    gtag("consent", "default", {
+      ad_personalization: "granted",
+      ad_storage: "granted",
+      ad_user_data: "granted",
+      analytics_storage: "granted",
+      functionality_storage: "granted",
+      personalization_storage: "granted",
+      security_storage: "granted",
+    });
+  } else {
+    gtag("consent", "default", {      
+      ad_personalization: "denied",
+      ad_storage: "denied",
+      ad_user_data: "denied",
+      analytics_storage: "denied",
+      functionality_storage: "denied",
+      personalization_storage: "denied",
+      security_storage: "denied",
+    });
+
+    if (!document.consentListenerAdded) {
+      const consentUpdate = () => {
+        gtag("consent", "update", {
+          ad_personalization: "granted",
+          ad_storage: "granted",
+          ad_user_data: "granted",
+          analytics_storage: "granted",
+          functionality_storage: "granted",
+          personalization_storage: "granted",
+          security_storage: "granted",
+        });
+        document.removeEventListener("updateConsent", consentUpdate);
+      };
+
+      document.addEventListener("updateConsent", consentUpdate);
+      document.consentListenerAdded = true;
+    }
+  }
+
+</script>
+
+<script is:inline>
+  (function (w, d, s, l, i) {
+    w[l] = w[l] || [];
+    w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+    var f = d.getElementsByTagName(s)[0],
+      j = d.createElement(s),
+      dl = l != "dataLayer" ? "&l=" + l : "";
+    j.async = true;
+    j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+    f.parentNode.insertBefore(j, f);
+  })(window, document, "script", "dataLayer", "GTM-KQ74HVHR");
+</script>
+<!-- End Google Tag Manager -->

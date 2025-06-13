@@ -1,0 +1,49 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { Image } from "astro:assets";
+import { Icon } from "astro-icon/components";
+import { siteName, socialInfo } from "../consts";
+---
+
+<Layout
+  title={`About | ${siteName}`}
+  description={`Know what ${siteName} is about and what we do here.`}
+  image={new URL("TalePunk.webp", Astro.site)}
+>
+  <div
+    class="mx-4 xs:mx-8 md:m-auto max-w-xl lg:max-w-2xl 2xl:max-w-4xl flex flex-col justify-center"
+  >
+    <h1 class="self-center text-4xl 2xl:text-6xl mb-8">About</h1>
+    <Image
+      src="/TalePunk_banner.webp"
+      width="1500"
+      height="500"
+      alt="TalePunk"
+      class="border-heading border-2 self-center"
+    />
+    <div class="mt-12 text-lg 2xl:text-2xl">
+      <p>Hey {siteName} here!!!</p>
+      <p>
+        We love a good story, and who doesn't? We rant about anime, movies, TV
+        shows and discuss our favorite books and manga. {siteName} is as much tech
+        as it is stories. We talk about tech, innovations that have been made, the
+        cool things that have come out and their wider implications. From stories
+        to tech and programming to policy, find it all here.
+      </p>
+    </div>
+    <div class="text-lg 2xl:text-2xl mt-16 xs:mr-16 sm:mr-52">
+      <h2 class="text-xl 2xl:text-3xl mb-8">Follow our social at</h2>
+      {
+        Object.keys(socialInfo).map((social) => (       
+
+          <a href={socialInfo[social].url} class="py-3 2xl:py-4 flex gap-x-4 items-center group"aria-label={social}>
+            <Icon name={social} size={35} />
+            <span  class="group-hover:text-accent">{socialInfo[social].username}</span>
+          </a>
+          <hr class="border-b border-br" />
+        ))
+      }
+    </div>
+  
+  </div>
+</Layout>

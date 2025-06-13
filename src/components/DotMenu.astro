@@ -1,0 +1,63 @@
+---
+import { Icon } from "astro-icon/components";
+import { dotMenuMap } from "../consts";
+---
+
+<div>
+  <button id="dot-toggle" aria-label="more" class="rounded-full hover:bg-hv p-2"
+    ><Icon name="dot-menu" size={20} />
+  </button>
+
+  <div
+    id="dotmenu"
+    class="hidden md:absolute pb-[33vh] md:pb-[10vh] static left-2/3 right-0 z-50 text-center bg-comp max-h-[40vh] md:max-h-[66vh] overflow-y-auto"
+  >
+    <hr class="border-t border-br block sticky top-0 z-10 mb-2" />
+
+    <a
+      href="/tag/"
+      class="block sm:hover:bg-hv sm:hover:rounded-md py-1 sm:py-2 sm:mx-2"
+      ><span class="flex gap-x-0.5 justify-center items-center">
+        <Icon name="hash" size={22} />Tag
+      </span></a
+    >
+    {
+      Object.keys(dotMenuMap).map((dotMenu, index) => (
+        <a
+          href={`/${dotMenu}/`}
+          class={`block sm:hover:bg-hv sm:hover:rounded-md py-1 sm:py-2 sm:mx-2 ${
+            index % 2 === 0 ? "bg-hv sm:bg-comp" : ""
+          }`}
+        >
+          {dotMenuMap[dotMenu]}
+        </a>
+      ))
+    }
+  </div>
+</div>
+<script>
+  document.addEventListener("astro:page-load", () => {
+    const dotmenuToggle = document.getElementById(
+      "dot-toggle",
+    ) as HTMLButtonElement;
+    const dotmenu = document.getElementById("dotmenu") as HTMLElement;
+
+    dotmenuToggle.addEventListener("click", (event: MouseEvent) => {
+      event.stopPropagation();
+      dotmenu.classList.toggle("hidden");
+    });
+
+    if (dotmenu.classList.contains("hidden")) {
+      document.addEventListener("click", (event: MouseEvent) => {
+        const target = event.target as Node;
+        if (!dotmenu.contains(target)) {
+          dotmenu.classList.add("hidden");
+        }
+      });
+
+      document.addEventListener("scroll", () => {
+        dotmenu.classList.add("hidden");
+      });
+    }
+  });
+</script>

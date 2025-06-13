@@ -1,0 +1,81 @@
+---
+title: "Claude just got upgraded, and why you should use it over ChatGPT"
+image: "./images/Claude.webp"
+category: "tech"
+contentType: "news"
+date: "2024-10-24"
+description: "Get to know Anthropic's new Claude 3.5 sonnet and 'computer use' in simple terms."
+tags: ["AI", "Claude", "ChatGPT", "Programming"]
+---
+
+import { Icon } from "astro-icon/components";
+import { Image } from "astro:assets";
+import Claude_3_5_bench from "./images/Claude_3.5_bench.webp";
+import SWE_bench_leaderboard_Oct_2024 from "./images/SWE_bench_leaderboard_Oct_2024.webp";
+import OS_World_Bench_Oct_2024 from "./images/OS_World_Bench_Oct_2024.webp";
+
+On Oct 22, 2024, Anthropic announced [<u>upgraded</u> Claude 3.5 sonnet, new model Claude 3.5 Haiku, and computer use.](https://www.anthropic.com/news/3-5-models-and-computer-use)  
+We are going to see how they compares to other publicly available models like OpenAI's GPT-4o or [Google's Gemini.](https://gemini.google.com/)
+
+<br />
+
+[**Claude 3.5 sonnet**](https://www.anthropic.com/claude/sonnet) - Anthropic's top model  
+[**Claude 3.5 Haiku**](https://www.anthropic.com/claude/haiku) - Fast and efficient model (uses less tokens/resources).
+
+<div class="mx-auto">
+  <Image src={Claude_3_5_bench} alt="Claude_3.5_bench" />
+</div>
+
+<br />
+
+Claude 3.5 sonnet is now the top model in [<u>SWE-bench</u>](https://www.swebench.com/) Verified.  
+SWE-bench tests language models on real-world GitHub issues (coding)
+
+- Resolved 49%
+
+<div class="mx-auto">
+  <Image
+    src={SWE_bench_leaderboard_Oct_2024}
+    alt="SWE_bench_leaderboard_Oct_2024"
+  />
+</div>
+
+<br />
+<br />
+
+Claude 3.5 sonnet is also higher on [<u>TAU-bench</u>](https://github.com/sierra-research/tau-bench) than GPT-4o.
+
+<br />
+
+## [Computer use (beta)](https://www.anthropic.com/news/developing-computer-use) -
+
+AI can control/use your computer and apps on it (by looking at a screen, moving a cursor, clicking buttons, and typing text).  
+Computer use is still experimental and currently available with Claude 3.5 sonnet.
+
+[<u>Computer use docs</u>](https://docs.anthropic.com/en/docs/build-with-claude/computer-use)
+
+<br />
+
+[<u>OSWorld Benchmark</u>](https://os-world.github.io/) for Claude 3.5 Sonnet in screenshot-only category.  
+(OSWorld evaluates AI models' ability to use computers like people)
+
+- 50 steps - 22%
+- 15 steps - 14.9 %
+
+<div class="mx-auto">
+  <Image src={OS_World_Bench_Oct_2024} alt="OS_World_Bench_Oct_2024" />
+</div>
+
+<br />
+<br />
+
+OpenAI [(ChatGPT)](https://chatgpt.com) offers GPT-4o and GPT-4o mini as free models.
+After 4 or 5 prompts, you will hit the free plan limit and get switched to 4o mini.
+
+Claude 3.5 sonnet is also available for free for limited use. You should consider using Claude, because Sonnet is a better model than 4o especially for coding.
+
+(Claude can't create images or have internet access, but you can upload images or docs.)
+
+<br />
+
+_\*Comparison table is taken from Anthropic's post_

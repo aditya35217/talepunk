@@ -1,0 +1,93 @@
+---
+import { siteName, contentTypeInfo } from "../../consts";
+import { getPosts } from "../../components/getPosts";
+import Layout from "../../layouts/Layout.astro";
+
+const allPosts = await getPosts("all");
+
+const allTags: string[] = allPosts.flatMap((post) => post.data.tags);
+
+allTags.sort();
+
+const tagsCounts = (Tags: string[]): Map<string, number> => {
+  const tagsCount: Map<string, number> = new Map<string, number>();
+  Tags.forEach((tag) => {
+    const count: number = tagsCount.get(tag) || 0;
+    tagsCount.set(tag, count + 1);
+  });
+
+  return tagsCount;
+};
+
+const allTagsCount: Map<string, number> = tagsCounts(allTags);
+
+const getClassForCount = (count: number): string => {
+  const baseClass: string =
+    count >= 610
+      ? "text-6xl sm:text-8xl rounded-lg py-2.5 px-2.5 sm:py-4"
+      : count >= 377
+        ? "text-5xl sm:text-7xl rounded-md px-2 py-2 sm:py-3"
+        : count >= 233
+          ? "text-4xl sm:text-6xl rounded-md py-1 px-2 sm:rounded-lg px-1.5 py-1.5 sm:py-2.5 sm:px-2"
+          : count >= 144
+            ? "text-3xl sm:text-5xl rounded-md py-1 px-2 sm:py-2"
+            : count >= 89
+              ? "text-2xl sm:text-4xl rounded-md px-1.5 py-0.5 sm:py-1.5"
+              : count >= 55
+                ? "text-xl sm:text-3xl rounded-md py-0.5 px-1.5 sm:py-1 sm:px-2"
+                : count >= 34
+                  ? "text-lg sm:text-2xl rounded py-0.5 px-1.5"
+                  : count >= 21
+                    ? "text-base sm:text-xl rounded py-0.5 px-1 sm:px-1.5"
+                    : count > 0
+                      ? "text-sm sm:text-lg rounded py-0.5 px-1 sm:px-1.5"
+                      : "";
+  return baseClass;
+};
+
+const uniqueContentType: string[] = [
+  ...new Set(
+    allPosts
+      .map((post) => post.data.contentType)
+      .filter((contentType): contentType is string => contentType !== undefined),
+  ),
+];
+uniqueContentType.sort();
+---
+
+<Layout
+  title={`Tags | ${siteName}`}
+  description={`All tags are listed here. Browse '${siteName}' by tags.`}
+>
+  <div class="m-8">
+    <p class="text-lg sm:text-2xl fond-bold mb-4">Content Type</p>
+    <div class="flex flex-wrap items-center">
+      {
+        uniqueContentType.map((contentType) => (
+          <a
+            id={`${contentType}`}
+            href={`/${contentType}/`}
+            class="text-lg sm:text-2xl rounded py-0.5 px-1.5 bg-comp  hover:bg-hv m-2"
+          >
+            {contentTypeInfo[contentType].title}
+          </a>
+        ))
+      }
+    </div>
+    <hr class="border-t border-br my-8" />
+    <p class="text-lg sm:text-2xl fond-bold mb-4">Tags</p>
+    <div class="flex flex-wrap items-center">
+      {
+        Array.from(allTagsCount).map(([tag, count]) => (
+          <a
+            id={`${tag}`}
+            href={`/tag/${tag}/`}
+            class={`${getClassForCount(count)} bg-comp hover:bg-hv m-2 `}
+          >
+            {tag}
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</Layout>

@@ -1,0 +1,31 @@
+---
+import { siteName, socialInfo } from "../consts";
+import { Icon } from "astro-icon/components";
+
+const today: Date = new Date();
+---
+
+<footer class="bg-comp  2xl:text-2xl mt-44 ">
+<div class="mx-4">
+  <div class="my-3">As an Amazon Associate, {siteName} earns from qualifying purchases.</div>
+  <div class="flex flex-col sm:flex-row"> 
+    <div class="flex items-center  py-1.5 order-2 sm:order-1">
+      <span>&copy;{` ${today.getFullYear()} ${siteName}`}</span>
+      <span class="mx-2">|</span>
+      <a href="/privacy-policy/" class=" hover:text-accent">Privacy Policy</a>
+    </div>
+
+    <div class="flex items-center my-1 sm:my-0 sm:mx-4 py-1.5 order-1 sm:order-2">
+      {
+        Object.keys(socialInfo).map((social) => (       
+          <a href={socialInfo[social].url} class="mr-2 sm:mx-2" aria-label={social}>
+            <Icon name={social} size={24} />
+          </a>      
+        ))
+      }
+    </div>
+  </div>
+</div>
+
+  
+</footer>

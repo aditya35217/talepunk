@@ -1,0 +1,39 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getPosts } from "../../components/getPosts";
+import PageWeb from "../../components/PageWeb.astro";
+import { contentTypeInfo } from "../../consts";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getPosts("all");
+
+  allPosts.sort((a, b) => {
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
+
+  const uniqueContentType: string[] = [
+    ...new Set(
+      allPosts
+        .map((post) => post.data.contentType)
+        .filter((contentType): contentType is string => contentType !== undefined),
+    ),
+  ];
+
+  return uniqueContentType.flatMap((contentType) => {
+    const contentTypePosts = allPosts.filter(
+      (post) => post.data.contentType === contentType,
+    );
+    return paginate(contentTypePosts, {
+      params: { contentType },
+      pageSize: 12,
+    });
+  });
+}) satisfies GetStaticPaths;
+
+const { contentType } = Astro.params;
+const { page } = Astro.props;
+const title = contentTypeInfo[contentType].title;
+const description = contentTypeInfo[contentType].description;
+---
+
+<PageWeb title={title} description={description} page={page} />

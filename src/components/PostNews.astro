@@ -1,0 +1,31 @@
+---
+import { getPosts } from "./getPosts";
+import { Icon } from "astro-icon/components";
+import CardLine from "./CardLine.astro";
+
+interface Props {
+  id: string;
+}
+
+const { id } = Astro.props;
+
+const allPosts = await getPosts("all");
+
+const rankPosts = (id: string) => {
+  return allPosts
+    .filter((post) => post.data.contentType === "news" && post.id !== id)
+    .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())
+    .slice(0, 3);
+};
+
+const newsPosts = rankPosts(id);
+---
+
+<div>
+  <a href="/news/" class="flex space-x-2 items-center mb-4 hover:text-accent">
+    <h2 class="text-xl font-bold">News</h2>
+    <div class=""><Icon name="arrow" size={20} /></div>
+  </a>
+
+  <CardLine Posts={newsPosts} />
+</div>

@@ -1,0 +1,73 @@
+---
+title: "Debian in WSL not Ubuntu"
+image: "./images/Debian_in_WSL_not_Ubuntu.webp"
+category: "tech"
+date: "2024-11-03"
+description: "If you are using WSL for programming in Windows, you should use Debian."
+tags: ["Programming", "Linux", "OS", "Recommandation"]
+---
+
+This article is not for Linux experts. If you are one and have a Windows machine (main reason is gaming), I hope you are using Debian for WSL and not Ubuntu.
+
+WSL (Windows Subsystem for Linux)
+
+## If You Don't Use WSL, You Should
+
+If you program on Windows, some languages require extra setup tools and dependencies to get started. In Linux, you often just need one package install command, and you're ready to code.  
+The size of WSL (with a distro) can sometimes be smaller than the dependencies you need to install on Windows.
+
+IDEs nowadays, like VS Code offer an option to connect directly to WSL, and the terminal it opens is Linux. You don't even notice that the terminal you're using is running on WSL.
+
+You can also copy and move files across Windows and Linux (WSL).
+
+Run this command as admin to install WSL. If you don't specify a distro, it installs Ubuntu.
+
+<pre class="bg-content2 text-bkg p-2 rounded italic inline-block">
+  <code>`wsl --install -d Debian`</code>
+</pre>
+
+WSL can also be install through Microsoft store.  
+(if you encounter problems just search online or ask AI, it's fairly simple)
+
+Since WSL2, we get a full Linux kernel in a lightweight VM, which was not the case in WSL1. This means Windows is not trying to emulate Linux; you get the actual Linux kernel.
+
+This brings some other benefits. For example, Windows 10/11 Home users were not able to use Docker/Docker Desktop, which requires Hyper-V, not available in the Home edition. But now, you can install Docker Desktop even on the Home version, which saves its files on Linux.
+
+WSL2 itself uses Hyper-V. So, Hyper-V is present in the Home edition, but you don't have direct access to it.
+
+<br />
+
+## Ubuntu vs Debian
+
+Ubuntu is based on Debian.  
+OS Linux is not just Linux but GNU/Linux, where GNU typically refers to desktop environments, system software, tools, libraries and Linux is the kernel.
+
+In the past, Debian was considered hard to install.  
+You also have to install the desktop environments (how your system looks) separately. For the average user, this one step is a big hurdle.
+
+Ubuntu became popular because it is more user-friendly out of the box. You don't have to think too much; you install Ubuntu and that's it. It also supports some hardware better.
+
+Ubuntu has the Snap package installer (along with Debian's apt), which can have the latest/up-to-date versions of software.  
+However, Snap packages bundle dependencies, which can lead to larger sizes and sometimes lower performance.
+
+Additionally, Canonical's (company behind Ubuntu) decision to push Snap by default for critical software (like browser Firefox) is concerning.
+
+Nowadays, Debian is also very good and doesn't have these problems.
+
+<br />
+
+## Why Debian in WSL
+
+### Whatever advantages Ubuntu has over Debian are completely void in WSL:
+
+Easy installation - Same process for WSL
+
+Better software updates - You use WSL mainly for programming, and apps like browsers or others are on Windows.
+
+Better hardware support - Since you are actually on Windows, it handles this part.
+
+Desktop environment - WSL is mainly used as a terminal. (Though you can open some individual apps in GUI)
+
+<br />
+
+Ultimately, Ubuntu is a Canonical product, while Debian is more stable and uses fewer resources.

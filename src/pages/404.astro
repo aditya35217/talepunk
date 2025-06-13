@@ -1,0 +1,35 @@
+---
+import "../styles/global.css";
+import { siteName } from "../consts";
+---
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="robots" content="noindex">
+    <title>{`404 Not found | ${siteName}`}</title>
+  </head>
+  <body class="bg-bkg text-content"> 
+    <div class="text-center mt-12 mx-4">
+      <p class="mb-4 text-3xl font-bold">404</p>
+      <p class="text-xl mb-12">
+        Not sure what you're looking for, but it's not here.
+      </p>
+      <p class="text-base my-4">You will be redirected in 24 sec</p>
+
+      <button class="bg-accent rounded p-2 px-4 text-2xl"
+        ><a href="/">Go Home</a>
+      </button>
+    </div>
+    <script>
+      setTimeout(() => {
+        if (document.title.includes("404 Not found | ")) {
+          window.location.href = "/";
+        }
+      }, 24000);
+    </script>
+  </body>
+</html>
+

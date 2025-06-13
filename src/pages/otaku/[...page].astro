@@ -1,0 +1,24 @@
+---
+import type { GetStaticPaths } from "astro";
+import { getPosts } from "../../components/getPosts";
+import PageWeb from "../../components/PageWeb.astro";
+import { categoryInfo } from "../../consts";
+
+export const category = "otaku";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const posts = await getPosts(category);
+  posts.sort((a, b) => {
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
+  return paginate(posts, {
+    pageSize: 12,
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+const title = categoryInfo[category].title;
+const description = categoryInfo[category].description;
+---
+
+<PageWeb title={title} description={description} page={page} pageFirst={true} />

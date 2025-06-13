@@ -1,0 +1,137 @@
+---
+import { type CollectionEntry, render } from "astro:content";
+import { Image, getImage } from "astro:assets";
+import { siteName } from "../consts";
+import Layout from "../layouts/Layout.astro";
+import { formatDate } from "../utils/DateFormat";
+import PostNews from "./PostNews.astro";
+import PostLatest from "./PostLatest.astro";
+import PostSimilar from "./PostSimilar.astro";
+
+interface Props {
+  post: CollectionEntry<"posts">;
+}
+
+const { post } = Astro.props;
+const image = new URL((await getImage({ src: post.data.image })).src, Astro.site);
+const { Content } = await render(post);
+
+---
+
+
+<Layout
+  title={`${post.data.title} | ${siteName}`}
+  description={post.data.description}
+  image={image}
+  article={true}
+>
+
+
+  <article data-pagefind-body class="text-content">
+    <header class="flex flex-col items-center justify-center">
+      <span
+        data-pagefind-meta="tag"
+        class="text-sm sm:text-lg rounded py-0.5 px-1 sm:px-1.5 bg-comp hover:bg-hv mt-4 mb-12"
+        data-pagefind-ignore
+      >
+        <a href={`/tag/${post.data.tags[0]}/`}>{post.data.tags[0]}</a>
+      </span>
+
+      <div
+        class="mx-8 my-3 text-heading text-center font-semibold text-2xl sm:text-3xl md:text-4xl 2xl:text-6xl"
+      >
+        <h1>{post.data.title}</h1>
+      </div>
+
+      <Image
+        data-pagefind-meta={`id:${post.id}`}
+        transition:name={post.id}
+        class="w-full h-full my-10"
+        src={post.data.image}
+        alt={post.data.title}
+        widths={[320, 640, 768, 1024, 1280, post.data.image.width]}
+        sizes="100vw"         
+        loading="eager"
+        data-pagefind-meta="srcset[srcset]"
+      />
+      <div class="mx-4 text-base xs:text-lg 2xl:text-xl">
+        <p>
+          <span data-pagefind-meta="date">
+            <time datetime={post.data.date.toISOString()}
+              >{
+                formatDate({ date: post.data.date, hideDay: post.data.hideDay })
+              }</time
+            >
+          </span>
+          <span class="ml-1 mr-5">|</span>
+
+          <span data-pagefind-meta="description">
+            {post.data.description}
+          </span>
+        </p>
+      </div>
+    </header>
+
+    <hr class="border-t border-br mx-2 mt-4 mb-6" />
+
+    <section class="grid grid-cols-1 lg:grid-cols-4">
+      <div
+        class="content-div bg-bkg2 py-12 px-6 xs:px-12 justify-self-center max-w-3xl 2xl:max-w-5xl font-medium lg:col-span-3 order-1 prose-h3:text-2xl prose-h3:2xl:prose-3xl text-content prose-xl 2xl:prose-2xl"
+      >
+        <Content />
+      </div>
+
+      <aside
+        class="mx-4 lg:col-span-1 order-4 lg:order-2 sm:flex lg:flex-col sm:space-x-8 lg:space-x-0 lg:mt-24"
+        data-pagefind-ignore
+      >
+        <div class="mt-12 mb-4">
+          <PostNews id={post.id} />
+        </div>
+
+        <div class="mt-12 mb-4">
+          <PostLatest id={post.id} />
+        </div>
+      </aside>
+
+      <section
+        class="mx-8 mt-12 sm:mt-24 mb-4 order-2 lg:col-span-4 lg:order-3"
+      >
+        <h2 class="text-xl xs:text-2xl 2xl:text-3xl my-4">
+          <a href="/tag/" class="hover:text-accent">Tags</a>
+        </h2>
+
+        <div class=" items-center" data-pagefind-ignore>
+          {
+            post.data.contentType && (
+              <a
+                href={`/${post.data.contentType}/`}
+                class="text-base sm:text-xl rounded py-0.5 px-1 sm:px-1.5 bg-comp hover:bg-hv m-2 inline-block"
+              >
+                {post.data.contentType}
+              </a>
+            )
+          }
+
+          {
+            post.data.tags.map((tag) => (
+              <a
+                id={`${tag}`}
+                href={`/tag/${tag}/`}
+                class="text-base sm:text-xl rounded py-0.5 px-1 sm:px-1.5 bg-comp hover:bg-hv m-2 inline-block"
+              >
+                {tag}
+              </a>
+            ))
+          }
+        </div>
+      </section>
+      <section
+        class="order-3 lg:col-span-4 lg:order-4 mx-4"
+        data-pagefind-ignore
+      >
+        <PostSimilar tags={post.data.tags} id={post.id} />
+      </section>
+    </section>
+  </article>
+</Layout>

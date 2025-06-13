@@ -1,0 +1,58 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: "Roboto";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("/fonts/Roboto-Regular.woff2") format("woff2");
+}
+
+@layer base {
+  :root {
+    --bkg: #ebebeb;
+    --bkg2: #e6e6e6;
+
+    --heading: #000000;
+    --content: #0c0c0c;
+    --content2: #444444;
+
+    --br: #bcbcbc;
+    --comp: #cccccc;
+    --comp2: #f4f4f4;
+    --hv: #bbbbbb;
+
+    --logo: #000000;
+
+    --accent: #0070e0;
+    --accent2: #0066cc;
+    --accent3: #ff6600;
+  }
+
+  :root[class="dark"] {
+    --bkg: #292929;
+    --bkg2: #282828;
+
+    --heading: #ffffff;
+    --content: #e0e0e0;
+    --content2: #cccccc;
+
+    --br: #4a4a4a;
+    --comp: #3a3a3a;
+    --comp2: #232323;
+    --hv: #4b4b4b;
+
+    --logo: #daa520;
+    --logo1: #ffb300;
+    --logo2: #ffc107;
+
+    --accent: #1e90ff;
+    --accent2: #0080ff;
+    --accent3: #ff6600;
+  }
+}
+.content-div a:hover {
+  color: var(--accent);
+}

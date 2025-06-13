@@ -1,0 +1,69 @@
+---
+import type { CollectionEntry } from "astro:content";
+import { contentTypeInfo } from "../consts";
+import { Image } from "astro:assets";
+import { agoDate } from "../utils/DateFormat";
+
+interface Props {
+  Posts: CollectionEntry<"posts">[];
+  Loading?: number;
+  small?: boolean;
+}
+
+const { Posts, Loading = 0, small = false } = Astro.props;
+---
+
+<div
+  class={`grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 ${small ? `lg:grid-cols-4` : `lg:grid-cols-3`} 2xl:grid-cols-4 sm:gap-4 lg:gap-8 lg:mx-2 items-center justify-center`}
+>
+  {
+    Posts.map((post, index) => (
+      <div class=" sm:my-2 sm:border-b sm:border-r sm:border-comp group">
+        <a
+          href={`/${post.data.category}/${post.id}/`}
+          class=" flex sm:flex-col space-x-4 sm:space-x-0 py-2 sm:p-0"
+        >
+          <div class="w-1/3 sm:w-full h-full relative  self-center">
+            <Image
+              transition:name={post.id}
+              class="w-full h-full group-hover:filter group-hover:opacity-80 "
+              src={post.data.image}
+              alt={post.data.title}
+              widths={[320, 640, 768, 1024]}
+              sizes="(max-width: 640px) 33vw, (max-width: 768px) 50vw, (max-width: 1024px) 33vw,  25vw"
+              loading={index < Loading ? "eager" : "lazy"}
+            />
+            <span class="text-xs xs:text-sm absolute bottom-0 left-0 bg-comp border border-br xs:px-0.5 sm:px-1 sm:m-1 sm:rounded-sm">
+              {post.data.tags[0]}
+            </span>
+          </div>
+          <div class="w-2/3 sm:w-full h-full flex flex-col">
+          <div>
+              <h2 class="text-left text-base sm:text-lg font-medium xs:font-semibold sm:my-2 2xl:text-3xl">
+                {post.data.title}
+              </h2>
+              <p class="text-left text-sm sm:text-base mt-2 sm:mt-0 hidden xs:block 2xl:text-xl">
+                {post.data.description}
+              </p>
+            </div>
+            
+            {!small && (
+              <div class="mt-5 text-content2 text-xs sm:text-sm hidden sm:block 2xl:text-lg">
+                {post.data.contentType && (
+                  <span class="mx-0.5">{contentTypeInfo[post.data.contentType].title}</span>                  
+                )}
+
+                {post.data.contentType && <span class="mx-1">|</span>}
+
+                <span class="mx-0.5">{agoDate(post.data.date)}</span>
+              </div>
+            )}
+          </div>
+        </a>
+
+       
+      </div>
+      <hr class="sm:hidden border-b border-br" />
+    ))
+  }
+</div>

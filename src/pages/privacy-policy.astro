@@ -1,0 +1,108 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { siteName } from "../consts";
+---
+
+<Layout
+  title={`Privacy Policy | ${siteName}`}
+  description={`Privacy Policy of ${siteName}`}
+  image={new URL("TalePunk.webp", Astro.site)}
+>
+  <div
+    class="mx-4 xs:mx-8 sm:mx-12 md:mx-24 justify-self-center font-medium prose-h1:text-center text-content prose-lg md:prose-xl 2xl:prose-2xl"
+  >
+    <div>
+      <h1>Privacy Policy</h1>
+      <p>
+        At {siteName}, we are committed to respecting the privacy rights of our
+        visitors. This Privacy Policy (the "Policy") outlines the information we
+        collect from visitors and how we use it. This Policy applies solely to
+        our website and not to other platforms, such as social media or
+        third-party websites, that may be accessed through it.
+      </p>
+    </div>
+
+    <div>
+      <p>We use "essential cookies" that are necessary for our site to work.</p>
+      <h2>Cookies</h2>
+      <p>
+        Cookies are tiny pieces of information that websites/apps place on
+        visitor's device. Cookies help remember preferences (like language
+        choices), track behavior such as page visits, and visitor engagement.
+        Most web browsers automatically accept cookies, but it is possible to
+        disable or selectively turn off our cookies or third-party cookies in
+        the browser settings. However, this can affect the functionality of our
+        site as well as other websites.
+      </p>
+      <p>
+        Site preferences (such as dark mode) are intended to provide an
+        enhanced, personalized experience and are only stored locally in
+        browser.
+      </p>
+    </div>
+    <div>
+      <h2>Amazon Affiliate</h2>
+      <p>
+        {siteName} is a participant in the Amazon Services LLC Associates Program, an affiliate advertising program designed to provide a means for sites to earn advertising fees by advertising and linking to amazon.com.
+      </p>
+    </div>
+    <div>
+      <h2>Advertisements and Analytics</h2>
+      <p>
+        We use third-party advertisements to support our site. Some advertisers
+        may utilize technologies like cookies when displaying ads on our site.
+        This may allow them (such as Google through the Google AdSense program)
+        to collect non-personal information (e.g., ads clicked versus those not
+        clicked, the type of browser used, operating system,
+        demographical/geographical area, etc.) and other data that helps improve
+        the relevance and effectiveness of ads.
+      </p>
+      <p>
+        Third Party Analytics - We allow third-party analytics services to
+        collect certain anonymous and non-personal information when visiting
+        this website. Analytics track behaviors such as which pages are visited
+        and how long is spent in each area of the site. This helps determine the
+        popularity of specific content and better understand how our website is
+        used.
+      </p>
+    </div>
+
+    <div class="flex flex-col">
+      <h4 class="text-xl md:text-2xl 2xl:text-3xl">
+        These links provide options to customize preferences for ads and opt-out
+        of analytics:
+      </h4>
+      <li>
+        Google ad settings - <a
+          href="https://adssettings.google.com"
+          class="hover:text-accent">https://adssettings.google.com</a
+        >
+      </li>
+      <li>
+        Google Analytics Opt-out - <a
+          href="https://tools.google.com/dlpage/gaoptout"
+          class="hover:text-accent">https://tools.google.com/dlpage/gaoptout</a
+        >
+      </li>
+
+      <p>
+        See google's privacy policy - <a
+          href="https://policies.google.com/privacy"
+          class="hover:text-accent">https://policies.google.com/privacy</a
+        >
+      </p>
+    </div>
+    <div>
+      <h2>Changes to this policy</h2>
+      <p>
+        {siteName} reserves the right to update its privacy policy at any time.
+        By accessing, browsing, using, and/or downloading this site, visitor agree
+        to comply with the terms outlined in the current policy for each visit. We
+        will notify visitors of significant changes, but it is the visitor's responsibility
+        to regularly review these policy and stay informed about any revisions. Continued
+        use of the website after any changes signifies acceptance of the modified
+        terms.
+      </p>
+    </div>
+  </div>
+</Layout>

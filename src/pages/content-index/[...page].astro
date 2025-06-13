@@ -1,0 +1,50 @@
+---
+import type { GetStaticPaths } from "astro";
+import { siteName } from "../../consts"
+import { getPosts } from "../../components/getPosts";
+import{formatDate} from"../../utils/DateFormat";
+import Layout from "../../layouts/Layout.astro";
+import Pagination from "../../components/Pagination.astro";
+
+export const getStaticPaths = (async ({ paginate }) => {
+  const allPosts = await getPosts("all");
+
+  allPosts.sort((a, b) => {
+    return b.data.date.getTime() - a.data.date.getTime();
+  });
+
+  return paginate(allPosts, {
+    pageSize: 30,
+  });
+}) satisfies GetStaticPaths;
+
+const { page } = Astro.props;
+
+const title = "Content Index"
+const pageInfo = page.currentPage > 1 ? ` (Page ${page.currentPage})` : "";
+const modifiedTitle = `${title}${pageInfo} | ${siteName}`;
+
+---
+
+<Layout title={modifiedTitle} description=`Take a quick look at all the posts on ${siteName}, they are all listed here.` image={new URL("TalePunk.webp", Astro.site)}>
+  <div class="mx-4 xs:mx-8 md:mr-16 lg:mr-24">
+    <h1 class="text-heading text-2xl font-semibold mb-6 sm:mb-10">{title}<span class="ml-3">{pageInfo}</span></h1>
+    {
+      page.data.map((post) => (
+        <a
+          href={`/${post.data.category}/${post.id}/`}
+          class="hover:font-semibold  text-lg xs:text-xl 2xl:text-2xl"
+        >
+          <div class="py-2">
+            <span class="w-28 xs:w-32 2xl:w-40 inline-block">           
+              {formatDate({date:post.data.date})}
+            </span>
+            <span>{post.data.title}</span>
+          </div>
+        </a>
+        <hr class="border-b border-br" />
+      ))
+    }
+  </div>
+  <Pagination page={page}/>
+</Layout>

@@ -1,0 +1,22 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  Posts: CollectionEntry< "posts">[];
+}
+
+const { Posts } = Astro.props;
+---
+
+{
+  Posts.map((post) => (
+    <div class=" ml-2 ">      
+      <a href={`/${post.data.category}/${post.id}/`} class="hover:font-semibold">
+          <div class="py-2">
+          <p class="text-base  2xl:text-lg ">{post.data.title}</p>
+        </div>
+      </a>      
+    </div>
+    <hr class="border-b border-br"/>
+  ))
+}
